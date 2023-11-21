@@ -1,0 +1,4 @@
+main: com.oreonk.OruAPI
+name: OruAPI
+version: 1
+api-version: 1.17
