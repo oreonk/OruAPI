@@ -2,6 +2,7 @@ package com.oreonk;
 
 import com.oreonk.DB.DatabaseCommand;
 import com.oreonk.DB.SQLite;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -20,5 +21,11 @@ public class OruAPI extends JavaPlugin {
     }
     public DatabaseCommand getDatabase(){ return this.db; }
 
-    
+    public double GetOnlinePlayerBlockCounter(Player player){
+        return allBlockBreak.get(player.getUniqueId().toString());
+    }
+
+    public HashMap<String, Double> GetOnlinePlayerBlockStats(Player player){
+        return blockTypesBreak.get(player.getUniqueId().toString());
+    }
 }

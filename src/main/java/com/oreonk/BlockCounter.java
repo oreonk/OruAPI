@@ -47,7 +47,7 @@ public class BlockCounter {
         File statsFile = getPlayerFile(player);
         FileConfiguration statsConfig = YamlConfiguration.loadConfiguration(statsFile);
         for (Map.Entry<String,Double> entry : OruAPI.getPlugin(OruAPI.class).blockTypesBreak.get(playerUUID).entrySet()) {
-                statsConfig.set(entry.getKey(), entry.getValue());
+                statsConfig.set("Blocks." + entry.getKey(), entry.getValue());
         }
         try {
             statsConfig.save(statsFile);
@@ -76,7 +76,7 @@ public class BlockCounter {
                 OruAPI.getPlugin(OruAPI.class).blockTypesBreak.put(playerUUID, empt);
             } else {
                 HashMap<String,Double> load = new HashMap<>();
-                for (String key : config.getKeys(true)){
+                for (String key : config.getConfigurationSection("Blocks").getKeys(true)){
                     load.put(key, config.getDouble(key));
                 }
                 OruAPI.getPlugin(OruAPI.class).blockTypesBreak.put(playerUUID,load);
