@@ -37,6 +37,7 @@ public class BlockCounter {
         }
     }
 
+    //Хендлит запись статистики блоков при логауте
     public void logoutHandler(Player player){
          String playerUUID = player.getUniqueId().toString();
         double amount = OruAPI.getPlugin(OruAPI.class).allBlockBreak.get(playerUUID);
@@ -44,7 +45,7 @@ public class BlockCounter {
             db.genericUpdateStatementDouble("BLOCKS", "UUID", amount, playerUUID);
         //});
         OruAPI.getPlugin(OruAPI.class).allBlockBreak.remove(playerUUID);
-        File statsFile = getPlayerFile(player);
+        File statsFile = OruAPI.getPlugin(OruAPI.class).getPlayerFile(player);
         FileConfiguration statsConfig = YamlConfiguration.loadConfiguration(statsFile);
         for (Map.Entry<String,Double> entry : OruAPI.getPlugin(OruAPI.class).blockTypesBreak.get(playerUUID).entrySet()) {
                 statsConfig.set("Blocks." + entry.getKey(), entry.getValue());
@@ -58,6 +59,7 @@ public class BlockCounter {
         OruAPI.getPlugin(OruAPI.class).blockTypesBreak.remove(playerUUID);
     }
 
+    //Хендлит запись блоков при логине
     public void loginHandler(Player player){
         double amount;
         String playerUUID = player.getUniqueId().toString();
@@ -69,7 +71,7 @@ public class BlockCounter {
         }
         //Bukkit.getScheduler().runTaskAsynchronously(OruAPI.getPlugin(OruAPI.class), () -> {
             OruAPI.getPlugin(OruAPI.class).allBlockBreak.put(playerUUID, amount);
-            File playerFile = getPlayerFile(player);
+            File playerFile = OruAPI.getPlugin(OruAPI.class).getPlayerFile(player);
             FileConfiguration config = YamlConfiguration.loadConfiguration(playerFile);
             if (config.getKeys(false).isEmpty() & !OruAPI.getPlugin(OruAPI.class).blockTypesBreak.containsKey(playerUUID)){
                 HashMap<String,Double> empt = new HashMap<>();
@@ -84,24 +86,4 @@ public class BlockCounter {
         //});
     }
 
-
-    public File getPlayerFile(Player player) {
-        String uuid = player.getUniqueId().toString();
-        if (!OruAPI.getPlugin(OruAPI.class).getDataFolder().exists()){
-            OruAPI.getPlugin(OruAPI.class).getDataFolder().mkdir();
-        }
-        File dir = new File(OruAPI.getPlugin(OruAPI.class).getDataFolder() + File.separator + "Stats");
-        if (!dir.exists()){
-            dir.mkdir();
-        }
-        File playerFile =  new File (OruAPI.getPlugin(OruAPI.class).getDataFolder() + File.separator + "Stats", uuid + ".yml");
-        if (!playerFile.exists()){
-            try {
-                playerFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return playerFile;
-    }
 }
