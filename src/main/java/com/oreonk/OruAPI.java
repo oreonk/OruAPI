@@ -9,20 +9,24 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class OruAPI extends JavaPlugin {
     private DatabaseCommand db;
     public HashMap<String, Double> allBlockBreak = new HashMap<>() {};
     public HashMap<String, HashMap<String, Double>> blockTypesBreak = new HashMap<>() {};
     public HashMap<String, HashMap<String, Double>> mobTypes = new HashMap<>() {};
+
     public BlockCounter blockCounter;
     public MobsCounter mobsCounter;
+    public SlowBuild slowBuild;
     @Override
     public void onEnable() {
         this.db = new SQLite(this);
         this.db.load();
         blockCounter = new BlockCounter();
         mobsCounter = new MobsCounter();
+        slowBuild = new SlowBuild();
     }
 
     public File getPlayerFile(Player player) {
@@ -45,6 +49,10 @@ public class OruAPI extends JavaPlugin {
         return playerFile;
     }
     public DatabaseCommand getDatabase(){ return this.db; }
+
+    public SlowBuild getSlowBuild() {
+        return slowBuild;
+    }
 
     public double getOnlinePlayerBlockCounter(Player player){
         return allBlockBreak.get(player.getUniqueId().toString());
