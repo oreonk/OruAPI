@@ -10,6 +10,7 @@ import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
+import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
 import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.function.operation.RunContext;
@@ -24,6 +25,7 @@ import com.sk89q.worldedit.session.PasteBuilder;
 import com.sk89q.worldedit.session.SessionManager;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.storage.ChunkStore;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -33,6 +35,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Iterator;
 
 public class SlowBuild {
@@ -41,6 +44,7 @@ public class SlowBuild {
         Clipboard clipboard = null;
 
         ClipboardFormat format = ClipboardFormats.findByFile(file);
+
         try (ClipboardReader reader = format.getReader(new FileInputStream(file))){
             clipboard = reader.read();
         } catch (Exception e){
@@ -95,25 +99,18 @@ public class SlowBuild {
             }
             if (!endLocation.equals(BlockVector3.at(0, 0, 0))) {
                 CuboidRegion region = new CuboidRegion(startLocation, endLocation);
-                try (EditSession editSession = WorldEdit.getInstance().newEditSession(world)) {
-                    Iterator<BlockVector3> iterator = clipboard.iterator();
-                    Iterator<BlockVector3> regionIterator = region.iterator();
-                    while (iterator.hasNext()) {
-                        BlockVector3 clipboardVector = iterator.next();
-                        BlockVector3 regionVector = regionIterator.next();
-                        BaseBlock block = clipboard.getFullBlock(clipboardVector);
-                        Bukkit.getServer().getConsoleSender().sendMessage("bl " + clipboardVector);
-                        editSession.setBlock(regionVector.getX(), regionVector.getY(), regionVector.getZ(), block);
+                for (int y = clipboard.getMinimumPoint().getY(); y <= clipboard.getMaximumPoint().getY(); y++) {
+                    for (int x = clipboard.getMinimumPoint().getX(); x <= clipboard.getMaximumPoint().getX(); x++) {
+                        for (int z = clipboard.getMinimumPoint().getZ(); z <= clipboard.getMaximumPoint().getZ(); z++) {
+                            BlockState block = clipboard.getBlock(BlockVector3.at(x, y, z));
+
+                            Bukkit.getServer().getConsoleSender().sendMessage(block.getBlockType().toString() + " (" + x + ", " + y + ", " + z + ")");
+                        }
                     }
-                } catch (Exception e){
-                    e.printStackTrace();
                 }
             } else {
                 player.sendMessage("REGION CREATE ERROR");
             }
-
-
-
         }
     }
     public File getSchematicFile(String fileName){
@@ -133,5 +130,8 @@ public class SlowBuild {
         }
         return location;
     }
-
+    public Integer calculateBlockSpeed(int speedValue, int valueNeeded){
+        int tickValue = OruAPI.getPlugin(OruAPI.class).getGlobalTickSpeed();
+        int blockPlaced = valueNeeded/speedValue*tickValue;
+    }
 }

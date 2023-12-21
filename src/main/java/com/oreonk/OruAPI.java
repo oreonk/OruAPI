@@ -49,7 +49,8 @@ public class OruAPI extends JavaPlugin {
         return playerFile;
     }
     public DatabaseCommand getDatabase(){ return this.db; }
-
+    //Глобальная переменная, отвечающая за время, раз в которое производится строительство
+    public Integer getGlobalTickSpeed(){ return 3; }
     public SlowBuild getSlowBuild() {
         return slowBuild;
     }

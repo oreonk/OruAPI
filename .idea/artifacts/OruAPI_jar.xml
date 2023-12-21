@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="OruAPI:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/OruAPI_jar</output-path>
+    <output-path>$USER_HOME$/Desktop/Server/plugins</output-path>
     <root id="archive" name="OruAPI.jar">
       <element id="module-output" name="OruAPI" />
       <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/plugin.yml" />
